@@ -1,56 +1,57 @@
 package edu.uoc.ds.adt;
 
-import edu.uoc.ds.adt.sequential.Queue;
-import edu.uoc.ds.traversal.Iterator;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayDeque;
 
 import static org.junit.Assert.*;
 
 public class PR1StackTest {
 
-    PR1Stack pr1q;
+    private PR1Stack pr1s;
+
+    private static final int[] EXPECTED_VALUES = {
+        240, 210, 182, 156, 132, 110, 90, 72, 56, 42, 30, 20, 12, 6, 2
+    };
 
     private void fillStack() {
-        for (char c = '0'; c < '9'; c++) {
-            pr1q.push(c);
+        for (int x = 0; x < PR1Stack.CAPACITY; x++) {
+            pr1s.push(PR1Function.calculate(x));
         }
     }
 
     @Before
     public void setUp() {
-        this.pr1q = new PR1Stack();
-
-        assertNotNull(this.pr1q.getStack());
-        this.fillStack();
-
+        this.pr1s = new PR1Stack();
+        assertNotNull(this.pr1s.getStack());
+        fillStack();
     }
 
     @After
     public void release() {
-        this.pr1q = null;
+        this.pr1s = null;
     }
 
-
-    @org.junit.Test
+    @Test
     public void stackTest() {
+        assertEquals(EXPECTED_VALUES.length, this.pr1s.getStack().size());
 
-        assertEquals(this.pr1q.CAPACITY-1, this.pr1q.getStack().size());
+        for (int expected : EXPECTED_VALUES) {
+            assertEquals(Integer.valueOf(expected), pr1s.pop());
+        }
 
-        Assert.assertEquals(Character.valueOf('8'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('7'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('6'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('5'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('4'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('3'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('2'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('1'), pr1q.pop());
-        Assert.assertEquals(Character.valueOf('0'), pr1q.pop());
-        assertEquals(0, this.pr1q.getStack().size());
+        assertEquals(0, this.pr1s.getStack().size());
+        assertTrue(this.pr1s.getStack().isEmpty());
     }
 
+    @Test
+    public void newStackTest() {
+        pr1s.newStack();
+        assertEquals(0, pr1s.getStack().size());
+        assertTrue(pr1s.getStack().isEmpty());
+
+        pr1s.push(PR1Function.calculate(14));
+        assertEquals(Integer.valueOf(240), pr1s.pop());
+        assertTrue(pr1s.getStack().isEmpty());
+    }
 }

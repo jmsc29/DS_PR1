@@ -3,26 +3,28 @@ package edu.uoc.ds.adt;
 import edu.uoc.ds.adt.sequential.Queue;
 import edu.uoc.ds.traversal.Iterator;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 public class PR1QueueTest {
-    PR1Queue pr1q;
+
+    private PR1Queue pr1q;
+
+    private static final int[] EXPECTED_VALUES = {
+        2, 6, 12, 20, 30, 42, 56, 72, 90, 110, 132, 156, 182, 210, 240
+    };
 
     private void fillQueue() {
-        for (char c = '0'; c < '9'; c++) {
-            pr1q.add(Character.valueOf(c));
-
+        for (int x = 0; x < PR1Queue.CAPACITY; x++) {
+            pr1q.add(PR1Function.calculate(x));
         }
     }
+
     @Before
     public void setUp() {
         this.pr1q = new PR1Queue();
-
         assertNotNull(this.pr1q.getQueue());
         fillQueue();
     }
@@ -32,54 +34,40 @@ public class PR1QueueTest {
         this.pr1q = null;
     }
 
-
-    @org.junit.Test
+    @Test
     public void queueTest() {
-        assertEquals(this.pr1q.CAPACITY-1, this.pr1q.getQueue().size());
-        Assert.assertEquals(Character.valueOf('0'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('1'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('2'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('3'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('4'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('5'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('6'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('7'), pr1q.poll());
-        Assert.assertEquals(Character.valueOf('8'), pr1q.poll());
+        assertEquals(EXPECTED_VALUES.length, this.pr1q.getQueue().size());
+
+        for (int expected : EXPECTED_VALUES) {
+            assertEquals(Integer.valueOf(expected), pr1q.poll());
+        }
+
         assertEquals(0, this.pr1q.getQueue().size());
+        assertTrue(this.pr1q.getQueue().isEmpty());
     }
 
     @Test
     public void queueTest2() {
+        Queue<Integer> queue = pr1q.getQueue();
+        Iterator<Integer> it = queue.values();
 
-        Queue<Character> queue = pr1q.getQueue();
-        Iterator<Character> it = queue.values();
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('0'), it.next());
+        for (int expected : EXPECTED_VALUES) {
+            assertTrue(it.hasNext());
+            assertEquals(Integer.valueOf(expected), it.next());
+        }
 
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('1'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('2'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('3'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('4'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('5'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('6'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('7'), it.next());
-
-        assertTrue(it.hasNext());
-        assertEquals(Character.valueOf('8'), it.next());
-
+        assertFalse(it.hasNext());
+        assertEquals(EXPECTED_VALUES.length, queue.size());
     }
 
+    @Test
+    public void newQueueTest() {
+        pr1q.newQueue();
+        assertEquals(0, pr1q.getQueue().size());
+        assertTrue(pr1q.getQueue().isEmpty());
+
+        pr1q.add(PR1Function.calculate(14));
+        assertEquals(Integer.valueOf(240), pr1q.poll());
+        assertTrue(pr1q.getQueue().isEmpty());
+    }
 }
